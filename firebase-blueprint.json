@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile, personal settings, and onboarding status",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "hasCompletedOnboarding": { "type": "boolean" },
+        "totalBudget": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "hasCompletedOnboarding"]
+    },
+    "BudgetSettings": {
+      "title": "BudgetSettings",
+      "description": "User monthly budget configuration",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "totalBudget": { "type": "number" },
+        "buckets": {
+          "type": "array",
+          "description": "List of budget buckets"
+        },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "totalBudget", "buckets"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Individual personal financial transaction record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["expense", "income", "transfer"] },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "time": { "type": "string", "maxLength": 10 },
+        "category": { "type": "string", "maxLength": 50 },
+        "channel": { "type": "string", "maxLength": 50 },
+        "note": { "type": "string", "maxLength": 500 },
+        "isCategorized": { "type": "boolean" },
+        "targetAccount": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "type", "amount", "date", "category", "channel", "isCategorized"]
+    },
+    "ImportHistory": {
+      "title": "ImportHistory",
+      "description": "Log of bill/ledger imports",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "fileName": { "type": "string", "maxLength": 200 },
+        "importedCount": { "type": "number" },
+        "importedAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "importedCount", "importedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Private user profile and onboarding flags"
+    },
+    "/users/{userId}/settings/budget": {
+      "schema": "BudgetSettings",
+      "description": "User specific budget configurations"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "User private ledger transactions"
+    },
+    "/users/{userId}/importHistory/{importId}": {
+      "schema": "ImportHistory",
+      "description": "User private import logs"
+    }
+  }
+}
